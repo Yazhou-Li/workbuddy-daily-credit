@@ -287,6 +287,8 @@ def maybe_self_update(quiet: bool, wait_seconds: int):
 
 
 def main():
+    # Windows 控制台默认非 UTF-8，打印中文会直接崩。必须在任何输出之前修好。
+    plat.ensure_utf8_streams()
     ap = argparse.ArgumentParser(description="WorkBuddy 每日免费积分自动领取（跨平台）")
     ap.add_argument("--json", action="store_true", help="输出 JSON")
     ap.add_argument("--status", action="store_true", help="仅查询不领取")
