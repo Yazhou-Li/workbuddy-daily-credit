@@ -1,0 +1,36 @@
+# 运行期产生的私有数据 —— 绝不能进版本库
+# state.json 里有你的积分余额，history.jsonl 里有每天签到记录
+state.json
+history.jsonl
+logs/
+*.out.log
+*.err.log
+
+# 自更新留下的备份与临时文件
+*.bak
+*.tmp
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+
+# 测试与工具
+.pytest_cache/
+.coverage
+htmlcov/
+
+# 编辑器 / 系统
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.swp
+
+# 打包产物
+dist/
+build/
+*.zip
+*.tar.gz
