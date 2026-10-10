@@ -2,6 +2,21 @@
 
 格式参考 [Keep a Changelog](https://keepachangelog.com/)，版本号遵循语义化版本。
 
+## [2.0.1] — 2026-10-10
+
+### Fixed
+- 修正 `tests/test_core.py` 中 `test_doctor_smoke` 在 Windows CI 上的误报。
+  原断言检查「输出全文不含 ticket 字样」，但 Windows 分支的说明文本 `windows_note`
+  里恰好包含 "...endpoint.json + ticket 结构..." 这一句解释性文字。
+  判据改为「ticket 不得作为**键名**出现」，并补充检查 socket 路径必须抽象化。
+  （这是测试自身的问题，平台层代码在 Windows 上工作正常）
+- 顺带消除一处 `ResourceWarning: unclosed file`
+
+> 值得记录的是：这条误报恰恰带来了好消息 —— Windows runner 上的 `doctor()`
+> 已验证能正确识别 `platform=windows`、选出存在的 `python.exe`、
+> 生成 3 个 Windows 候选路径，并能正常调用 `schtasks /Query`。
+> 平台层在 Windows 上不崩，剩下的只是「能不能真的连上 IPC」这个真机问题。
+
 ## [2.0.0] — 2026-10-10
 
 首个开源版本。从 macOS-only 的一次性脚本，重构为跨平台、可自进化的 Skill。
