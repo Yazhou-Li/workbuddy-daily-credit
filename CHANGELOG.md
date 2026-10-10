@@ -2,6 +2,19 @@
 
 格式参考 [Keep a Changelog](https://keepachangelog.com/)，版本号遵循语义化版本。
 
+## [2.0.3] — 2026-10-10
+
+### Fixed
+- `tools/build_manifest.py` 同样补上 Windows UTF-8 处理。
+  上一版只修了 `scripts/` 下三个脚本，漏了独立运行的 tools 脚本——
+  它在 CI 的 `manifest --check` 步骤里打印中文又一次触发同一个 UnicodeEncodeError
+- `.github/workflows/ci.yml` 增加全局 `PYTHONUTF8: "1"` 作为 CI 侧兜底，
+  避免今后新增的任何工具脚本再次掉进同一个坑
+
+> 这三次连续修复（2.0.1 → 2.0.3）全部由 GitHub Actions 的 `windows-latest`
+> runner 暴露。这是把 CI 矩阵覆盖到 Windows 的直接收益——
+> 如果只在 macOS 上验证，这三个问题会一直留给第一位 Windows 用户去撞。
+
 ## [2.0.2] — 2026-10-10
 
 ### Fixed
