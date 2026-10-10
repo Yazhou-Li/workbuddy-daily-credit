@@ -1,0 +1,62 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    # 三平台矩阵：让 Windows / Linux 至少在「不崩」和「平台层可自检」上持续受保护。
+    # 注意这不等同于「Windows 上能真的领到积分」——那需要一台装了 WorkBuddy 的机器。
+    name: test (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [macos-latest, windows-latest, ubuntu-latest]
+        python-version: ["3.11", "3.13"]
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Run core tests
+        run: python tests/test_core.py
+
+      - name: Run updater safety tests
+        run: python tests/test_updater_safety.py
+
+      - name: Verify manifest is in sync with files
+        # 改了 scripts/ 却忘了重新生成 manifest，会导致线上用户自更新反复失败。
+        # 这道检查就是专门堵这个洞的。
+        run: python tools/build_manifest.py --check
+
+      - name: Smoke — doctor must not crash
+        # 在没有 WorkBuddy 的 CI 机器上，doctor 也应当正常输出而非抛异常
+        run: python scripts/claim.py --doctor
+
+      - name: Smoke — claim exits 3 or 2, never traceback
+        # CI 上没有主进程，预期是退出码 3（主进程不可用），
+        # 而不是 Python traceback。这一条守的是「失败也要优雅失败」。
+        shell: bash
+        run: |
+          set +e
+          python scripts/claim.py --json --wait 5 --no-self-update > out.json 2> err.txt
+          code=$?
+          echo "exit=$code"
+          cat out.json
+          if [ "$code" != "3" ] && [ "$code" != "2" ]; then
+            echo "::error::unexpected exit code $code"
+            cat err.txt
+            exit 1
+          fi
+          python -c "import json,sys; json.load(open('out.json')); print('stdout is valid JSON')"
