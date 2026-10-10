@@ -1,0 +1,24 @@
+# 自更新机制依赖逐字节的 sha256 —— Git 绝对不许改写换行符。
+#
+# 背景（这个坑是在 GitHub Actions windows-latest 上炸出来的）：
+# Git 在 Windows 上默认 core.autocrlf=true，checkout 时会把 LF 换成 CRLF。
+# 文件字节一变，sha256 就跟着变，于是：
+#   1. CI 的 `build_manifest.py --check` 判定「全部文件都与 manifest 不符」
+#   2. 更严重的是真实用户场景：Windows 上每次跑自更新都会以为有新版本，
+#      下载 → 校验 → 本地文件仍是 CRLF → 哈希不符 → 永远更新不完
+# 所以这里把仓库里所有文本文件钉死为 LF。
+#
+# 注意：已经 checkout 过的旧副本不会自动纠正，遇到上述症状请重新 clone。
+
+* text=auto eol=lf
+
+# 二进制资源明确声明，避免任何形式的转换（本仓库暂无，留作模板）
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
+*.zip binary
+
+# 已经字节中型性很强的产物不需要参与 diff
+*.svg text eol=lf
