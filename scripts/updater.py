@@ -44,6 +44,8 @@ from datetime import datetime
 
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 SKILL_DIR = os.path.dirname(SCRIPT_DIR)
+if SCRIPT_DIR not in sys.path:
+    sys.path.insert(0, SCRIPT_DIR)
 # 布局约定：**skill 目录本身就是仓库根目录**。
 # 于是 clone 到 ~/.workbuddy/skills/workbuddy-daily-credit 后，
 # 这棵树的形状与 GitHub 仓库完全同构 —— manifest 里的相对路径两边都能直接对上，
@@ -247,6 +249,11 @@ def rollback() -> dict:
 
 
 def main():
+    try:
+        import wbplatform
+        wbplatform.ensure_utf8_streams()
+    except Exception:
+        pass
     ap = argparse.ArgumentParser(description="自进化更新器")
     ap.add_argument("--force", action="store_true", help="忽略 24h 节流")
     ap.add_argument("--check", action="store_true", help="只检查不落地")
