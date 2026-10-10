@@ -2,6 +2,19 @@
 
 格式参考 [Keep a Changelog](https://keepachangelog.com/)，版本号遵循语义化版本。
 
+## [2.0.2] — 2026-10-10
+
+### Fixed
+- **修复 Windows 上输出中文直接崩溃**（真正的跨平台 bug，由 GitHub Actions
+  `windows-latest` runner 首次暴露）：
+  Windows 控制台默认走系统 ANSI 代码页（简中环境 cp936、CI 上 cp1252），
+  打印中文抛 `UnicodeEncodeError: 'charmap' codec can't encode characters`。
+  本项目汇报文案全是中文，因此这台算性问题会让 Windows 上连 `--doctor` 都跑不完。
+  在 `wbplatform.ensure_utf8_streams()` 中统一强制 UTF-8，
+  并在 `claim.py` / `install.py` / `updater.py` 的入口最早处调用。
+  （macOS 分支里同类问题靠 launchd plist 的 `PYTHONUTF8=1` 环境变量解决，
+  但那只覆盖了定时任务，覆盖不到命令行直接执行，所以这次改为在代码层根治）
+
 ## [2.0.1] — 2026-10-10
 
 ### Fixed
