@@ -514,6 +514,25 @@ def _install_cron(python, claim_py) -> tuple:
 # --------------------------------------------------------------------------- #
 # 自检                                                                         #
 # --------------------------------------------------------------------------- #
+def ensure_utf8_streams():
+    """强制 stdout/stderr 用 UTF-8 输出。
+
+    ⚠️ 实测坑（2026-10-10, GitHub Actions windows-latest）：
+    Windows 控制台默认走系统 ANSI 代码页（简体中文环境是 cp936，CI 上是 cp1252），
+    一打印中文就抛 UnicodeEncodeError: 'charmap' codec can't encode characters。
+    本项目的汇报文案全是中文，所以不修这一处，Windows 上连 --doctor 都跑不完。
+
+    Python 3.7+ 用 reconfigure 就地改；再包一层 try 是因为某些重定向场景
+    （比如被别的进程接管 stdout）下 reconfigure 会失败，那就退回原样，不致命。
+    """
+    for stream in (sys.stdout, sys.stderr):
+        try:
+            if hasattr(stream, "reconfigure"):
+                stream.reconfigure(encoding="utf-8", errors="replace")
+        except Exception:
+            pass
+
+
 def doctor() -> dict:
     """收集诊断信息。提 issue 时贴这个（自动脱敏，不含 ticket 明文）。"""
     cfg = read_endpoint()
