@@ -1,9 +1,9 @@
 {
-  "version": "2.0.3",
-  "generated_at": "2026-10-10T04:33:29+00:00",
+  "version": "2.0.4",
+  "generated_at": "2026-10-10T04:39:52+00:00",
   "files": {
     "VERSION": {
-      "sha256": "be695fc8092ad3706d7d7d3b5104e1eaf8fe69666e5958e375c9952a06fa9514",
+      "sha256": "137f467241023dadfa605db00e630b25a9394d0fc7232718812983ba24b93945",
       "size": 6
     },
     "SKILL.md": {
