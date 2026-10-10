@@ -19,6 +19,15 @@ import json
 import os
 import sys
 
+# 与 wbplatform.ensure_utf8_streams() 同源的问题：Windows 控制台默认 cp936/cp1252，
+# 打印中文会抛 UnicodeEncodeError。本脚本独立运行（不 import scripts/），故内联一份。
+for _stream in (sys.stdout, sys.stderr):
+    try:
+        if hasattr(_stream, "reconfigure"):
+            _stream.reconfigure(encoding="utf-8", errors="replace")
+    except Exception:
+        pass
+
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 OUT = os.path.join(ROOT, "manifest.json")
 
