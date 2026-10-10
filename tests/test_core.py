@@ -79,9 +79,17 @@ class TestPlatform(unittest.TestCase):
         d = plat.doctor()
         self.assertIn("platform", d)
         self.assertIn("endpoint_resolved", d)
-        # doctor 不得泄露 ticket 明文
-        blob = repr(d)
-        self.assertNotIn("ticket", blob.lower().replace("'ticket'", ""))
+        # doctor 会被贴到 issue 里，因此不得泄露 ticket 明文。
+        # 判据是「ticket 不能作为键名出现」，而不是「全文不能出现 ticket 字样」——
+        # 后者会误伤 windows_note 里那句解释性的 "...endpoint.json + ticket 结构..."。
+        # （这条断言曾经在 Windows CI 上误报失败，是测试自身的问题，不是平台层的问题。）
+        self.assertFalse(any("ticket" in str(k).lower() for k in d.keys()))
+        # socket 路径也必须抽象化，不能直接吐原文
+        self.assertNotIn("/Users/", str(d.get("endpoint_resolved")))
+
+    def test_version_present(self):
+        with open(os.path.join(ROOT, "VERSION"), encoding="utf-8") as f:
+            self.assertRegex(f.read().strip(), r"^\d+\.\d+\.\d+$")
 
 
 class TestCliWiring(unittest.TestCase):
@@ -94,10 +102,6 @@ class TestCliWiring(unittest.TestCase):
                 self.assertTrue(os.path.exists(path))
                 with open(path, encoding="utf-8") as fh:
                     compile(fh.read(), path, "exec")
-
-    def test_version_present(self):
-        self.assertRegex(open(os.path.join(ROOT, "VERSION")).read().strip(),
-                         r"^\d+\.\d+\.\d+$")
 
 
 if __name__ == "__main__":
