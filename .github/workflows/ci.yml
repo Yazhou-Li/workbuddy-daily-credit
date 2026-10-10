@@ -11,6 +11,11 @@ permissions:
 
 jobs:
   test:
+    # Python 在 Windows 上读 str 用 locale，但写 stdout 用 ANSI 代码页（cp936/cp1252），
+    # 中文会抛 UnicodeEncodeError。代码层已在 ensure_utf8_streams() 修过，
+    # 这里再加一道环境变量做 CI 侧兜底，避免任何遗漏的工具脚本再次踩坑。
+    env:
+      PYTHONUTF8: "1"
     # 三平台矩阵：让 Windows / Linux 至少在「不崩」和「平台层可自检」上持续受保护。
     # 注意这不等同于「Windows 上能真的领到积分」——那需要一台装了 WorkBuddy 的机器。
     name: test (${{ matrix.os }})
