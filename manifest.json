@@ -1,9 +1,9 @@
 {
-  "version": "2.0.1",
-  "generated_at": "2026-10-10T04:12:23+00:00",
+  "version": "2.0.2",
+  "generated_at": "2026-10-10T04:20:27+00:00",
   "files": {
     "VERSION": {
-      "sha256": "fe840f52fb5578d3f77eb497115eb02c6036601c3a53e60df7995c7276baa77a",
+      "sha256": "b4b16faea52dc04ccfe32f7b342094855923ebf599a3cac1940470a2d6d7c261",
       "size": 6
     },
     "SKILL.md": {
@@ -15,20 +15,20 @@
       "size": 4301
     },
     "scripts/claim.py": {
-      "sha256": "dc5fe414ff268f7c03f11aae573b6047f53f2d5987080e1dad040df4150ee31a",
-      "size": 15112
+      "sha256": "43ff7c7f63d051be368f2696f0f3429f537828776ceed42d9320a63c464117fc",
+      "size": 15248
     },
     "scripts/wbplatform.py": {
-      "sha256": "50f153ef9e8233bedf2339deb31320ee893e611b819cac0895de59849a862cbd",
-      "size": 21378
+      "sha256": "772b1a0c13c119cb7b47ab3705388cc598c20495053c188bdc91cb60f365740e",
+      "size": 22255
     },
     "scripts/updater.py": {
-      "sha256": "77eb8faf04a65b354e13c35fa7fedd785192c10d4c6d77b53d28585ae4018bc9",
-      "size": 9599
+      "sha256": "3710fa21b60421c4d48211865b17ab43ae986ff75fda95251f5d8b86c5b41c94",
+      "size": 9776
     },
     "scripts/install.py": {
-      "sha256": "66e57f976170186dd79f39975d410c8eef20a5009b2ddd43e9e564b70bdf82b0",
-      "size": 3385
+      "sha256": "098592168022803e6b8894eb44fc1678c413b112d2c627360390f6892d2cfb69",
+      "size": 3416
     }
   }
 }
