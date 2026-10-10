@@ -1,0 +1,45 @@
+name: Release manifest
+
+# 自更新的信任根（manifest.json）必须由 CI 生成，不接受手改。
+# 每次推到 main 都重算一遍哈希并回写，保证线上客户端拿到的清单与磁盘逐字节一致。
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  manifest:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+
+      - name: Run safety tests first
+        run: |
+          python tests/test_updater_safety.py
+          python tests/test_core.py
+
+      - name: Regenerate manifest.json
+        run: python tools/build_manifest.py
+
+      - name: Verify generated manifest passes its own check
+        run: python tools/build_manifest.py --check
+
+      - name: Commit if changed
+        run: |
+          if git diff --quiet -- manifest.json; then
+            echo "manifest.json unchanged"
+          else
+            git config user.name  "github-actions[bot]"
+            git config user.email "github-actions[bot]@users.noreply.github.com"
+            git add manifest.json
+            git commit -m "chore: regen manifest.json for $(cat VERSION)"
+            git push
+          fi
