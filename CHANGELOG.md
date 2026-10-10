@@ -2,6 +2,16 @@
 
 格式参考 [Keep a Changelog](https://keepachangelog.com/)，版本号遵循语义化版本。
 
+## [2.0.4] — 2026-10-10
+
+### Fixed
+- **修复 Windows CRLF 导致自更新永远更新不完**（三个平台 bug 里唯一真的影响功能的那个）
+  Git 在 Windows 上默认 `core.autocrlf=true`，checkout 时把 LF 换成 CRLF → 文件字节变
+  → sha256 变 → manifest 判定「全部 7 个文件都不符」。后果不只是 CI 变红，
+  而是真实用户场景里每次自更新都会以为有新版本，下载后本地仍是 CRLF、
+  哈希对不上，陷入永远更新不完的循环。
+  新增 `.gitattributes` 把文本文件钉死 `eol=lf`。
+
 ## [2.0.3] — 2026-10-10
 
 ### Fixed
