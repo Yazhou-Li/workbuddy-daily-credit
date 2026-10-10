@@ -76,6 +76,7 @@ def do_doctor():
 
 
 def main():
+    plat.ensure_utf8_streams()
     ap = argparse.ArgumentParser(description="WorkBuddy 每日积分 · 跨平台定时安装器")
     ap.add_argument("--install", action="store_true", help="安装（默认动作）")
     ap.add_argument("--uninstall", action="store_true")
